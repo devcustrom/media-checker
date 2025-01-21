@@ -42,7 +42,11 @@ export default function(reactiveVarFunc, options = {}) {
 		try {
 			const m = window.matchMedia(sizes[size])
 			m.addEventListener("change", function () {
-				media[size].value = m.matches
+				if(typeof media[size].set === 'function') {
+					media[size].set(m.matches)
+				} else {
+					media[size].value = m.matches
+				}
 			});
 		} catch {
 			console.log('У вас устаревший браузер')
