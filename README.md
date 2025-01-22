@@ -19,7 +19,7 @@ This plugin allows you to create custom animations
 Install `media-checker` using npm package manager:
 
 ```shell
-npm i -D media-checker
+npm i media-checker
 ```
 
 
