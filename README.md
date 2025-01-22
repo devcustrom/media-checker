@@ -86,9 +86,12 @@ const options = {
   }
 }
 
-export default {
-  vueMedia: useMediaVue(ref, options),
-  nanoMedia: useMediaNS(atom, options)
+const vueMedia = useMediaVue(ref, options)
+const nanoMedia = useMediaNS(atom, options)
+
+export {
+  vueMedia,
+  nanoMedia
 }
 
 // In other.js

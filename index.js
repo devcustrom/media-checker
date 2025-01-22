@@ -12,6 +12,8 @@ export const isValidMediaQuery = (query) => {
 	}
 }
 
+let isBrowser = typeof window !== 'undefined'
+
 const start = {
 	sm: "(min-width: 640px)",
 	md: "(min-width: 768px)",
@@ -38,29 +40,35 @@ export default function(reactiveVarFunc, options = null) {
 			valid,
 			matches
 		} = isValidMediaQuery(sizes[key])
-		obj[key] = reactiveVarFunc(typeof window !== 'undefined' && valid ? matches : false)
+		obj[key] = reactiveVarFunc(isBrowser && valid ? matches : false)
 		return obj
 	}, {})
+
+	const setValue = (key, value) => {
+		if(typeof media[key].set === 'function') {
+			media[key].set(value)
+		} else {
+			media[key].value = value
+		}
+	}
 
 	const checkSize = (size) => {
 		try {
 			const m = window.matchMedia(sizes[size])
 			m.addEventListener("change", function () {
-				if(typeof media[size].set === 'function') {
-					media[size].set(m.matches)
-				} else {
-					media[size].value = m.matches
-				}
+				setValue(m.matches)
 			});
 		} catch {
 			console.log('У вас устаревший браузер')
 		}
 	}
-	if(typeof window !== 'undefined') {
+	if(isBrowser) {
 		Object.keys(media).forEach(size => {
 			checkSize(size)
 		})
-		media.mediaInited = true
 	}
+
+	media.mediaInited = isBrowser
+
 	return media
 }
