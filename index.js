@@ -1,4 +1,4 @@
-function isValidMediaQuery(query) {
+export const isValidMediaQuery = (query) => {
 	try {
 		const mediaQueryList = window.matchMedia(query);
 		return {
@@ -20,21 +20,25 @@ const start = {
 	mouse: "(hover: hover)"
 }
 
-export default function(reactiveVarFunc, options = {}) {
-	const sizes = typeof options.extend === 'object' ? {
-		startValue,
+const getOptions = (options) => {
+	const isObject = (o) => typeof o === 'object'
+	return options && isObject(options) && Boolean(isObject(options.extend) || isObject(options.start)) ? options.extend ? {
+		...start,
 		...options.extend
-	} : options.start ? options.start : start
+	} : options.start : start
+}
+
+export default function(reactiveVarFunc, options = null) {
+	const sizes = getOptions(options)
+
 	if(typeof reactiveVarFunc !== 'function') throw new Error("It is necessary to pass `ref` if you are using Vue, or `atom` if you are using Nanostores.");
-	
+
 	const media = Object.keys(sizes).reduce((obj, key) => {
 		const {
 			valid,
 			matches
 		} = isValidMediaQuery(sizes[key])
-		if(valid) {
-			obj[key] = reactiveVarFunc(typeof window !== 'undefined' ? matches : false)
-		}
+		obj[key] = reactiveVarFunc(typeof window !== 'undefined' && valid ? matches : false)
 		return obj
 	}, {})
 
